@@ -13,8 +13,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.cvelez.freemarkettest.feactureItemDetail.presentation.ArticleDetailRoute
-import com.cvelez.freemarkettest.feactureItemDetail.presentation.ArticleDetailViewModel
+import com.cvelez.freemarkettest.feactureArticleDetail.presentation.ArticleDetailRoute
+import com.cvelez.freemarkettest.feactureArticleDetail.presentation.ArticleDetailViewModel
 import com.cvelez.freemarkettest.featureSearch.presentation.SearchArticleRoute
 import com.cvelez.freemarkettest.featureSearch.presentation.viewModel.SearchArticleViewModel
 import com.cvelez.freemarkettest.ui.navigation.Route.HOME

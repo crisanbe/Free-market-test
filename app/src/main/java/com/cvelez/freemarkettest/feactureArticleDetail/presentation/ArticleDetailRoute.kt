@@ -1,4 +1,4 @@
-package com.cvelez.freemarkettest.feactureItemDetail.presentation
+package com.cvelez.freemarkettest.feactureArticleDetail.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable

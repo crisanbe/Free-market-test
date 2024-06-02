@@ -1,10 +1,10 @@
-package com.cvelez.freemarkettest.feactureItemDetail.data.repository
+package com.cvelez.freemarkettest.feactureArticleDetail.data.repository
 
 import android.util.Log
 import com.cvelez.freemarkettest.core.network.wraps.ApiResult
-import com.cvelez.freemarkettest.feactureItemDetail.data.model.ArticleDetail
-import com.cvelez.freemarkettest.feactureItemDetail.data.repository.dataSource.ArticleDetailDataSource
-import com.cvelez.freemarkettest.feactureItemDetail.domain.ArticleDetailRepository
+import com.cvelez.freemarkettest.feactureArticleDetail.data.model.ArticleDetail
+import com.cvelez.freemarkettest.feactureArticleDetail.data.repository.dataSource.ArticleDetailDataSource
+import com.cvelez.freemarkettest.feactureArticleDetail.domain.ArticleDetailRepository
 import com.cvelez.freemarkettest.featureSearch.data.repository.toApiResult
 import com.cvelez.freemarkettest.featureSearch.data.repository.toErrorWrapper
 import kotlinx.coroutines.Dispatchers

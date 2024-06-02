@@ -1,4 +1,4 @@
-package com.cvelez.freemarkettest.feactureItemDetail.presentation
+package com.cvelez.freemarkettest.feactureArticleDetail.presentation
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cvelez.freemarkettest.core.network.wraps.ApiResult
 import com.cvelez.freemarkettest.core.network.wraps.ErrorWrapper
-import com.cvelez.freemarkettest.feactureItemDetail.data.model.ArticleDetail
-import com.cvelez.freemarkettest.feactureItemDetail.domain.ArticleDetailRepository
+import com.cvelez.freemarkettest.feactureArticleDetail.data.model.ArticleDetail
+import com.cvelez.freemarkettest.feactureArticleDetail.domain.ArticleDetailRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

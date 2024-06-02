@@ -1,4 +1,4 @@
-package com.cvelez.freemarkettest.feactureItemDetail.data.model
+package com.cvelez.freemarkettest.feactureArticleDetail.data.model
 
 import com.google.gson.annotations.SerializedName
 

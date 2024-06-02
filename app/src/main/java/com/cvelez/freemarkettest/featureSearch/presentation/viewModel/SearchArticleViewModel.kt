@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cvelez.freemarkettest.core.network.wraps.ApiResult
 import com.cvelez.freemarkettest.core.network.wraps.ErrorWrapper
-import com.cvelez.freemarkettest.feactureItemDetail.data.model.ArticleDetail
 import com.cvelez.freemarkettest.featureSearch.data.model.Article
 import com.cvelez.freemarkettest.featureSearch.domain.SearchArticleRepository
 import com.cvelez.freemarkettest.featureSearch.presentation.estateUi.SearchArticleEvents

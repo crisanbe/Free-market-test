@@ -1,8 +1,8 @@
-package com.cvelez.freemarkettest.feactureItemDetail.data.repository.dataSourceImpl
+package com.cvelez.freemarkettest.feactureArticleDetail.data.repository.dataSourceImpl
 
 import com.cvelez.freemarkettest.core.network.api.ApiService
-import com.cvelez.freemarkettest.feactureItemDetail.data.model.ArticleDetail
-import com.cvelez.freemarkettest.feactureItemDetail.data.repository.dataSource.ArticleDetailDataSource
+import com.cvelez.freemarkettest.feactureArticleDetail.data.model.ArticleDetail
+import com.cvelez.freemarkettest.feactureArticleDetail.data.repository.dataSource.ArticleDetailDataSource
 import retrofit2.Response
 import javax.inject.Inject
 
