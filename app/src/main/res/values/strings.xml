@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Free market test</string>
+    <string name="caracteriticas">Características:</string>
+    <string name="condicion">Condición: %1$s</string>
+    <string name="mas_informacion">Más información: %1$s</string>
 </resources>
