@@ -33,7 +33,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.cvelez.freemarkettest.R
 import com.cvelez.freemarkettest.feactureArticleDetail.data.model.ArticleDetail
 import com.cvelez.freemarkettest.feactureArticleDetail.data.model.ArticlePictures
-import com.cvelez.freemarkettest.featureSearch.presentation.ArticleList
 import com.cvelez.freemarkettest.ui.Utils
 import com.cvelez.freemarkettest.ui.theme.TestMeliTheme
 
@@ -84,6 +83,8 @@ fun ArticleDetailScreen(
                             Image(
                                 painter = rememberAsyncImagePainter(
                                     uiState.product?.pictures?.get(
+
+
                                         0
                                     )?.secure_url
                                 ),

@@ -10,11 +10,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.cvelez.freemarkettest.feactureArticleDetail.presentation.ArticleDetailRoute
 import com.cvelez.freemarkettest.feactureArticleDetail.presentation.ArticleDetailViewModel
+import com.cvelez.freemarkettest.featureSearch.presentation.CustomLoad
 import com.cvelez.freemarkettest.featureSearch.presentation.SearchArticleRoute
 import com.cvelez.freemarkettest.featureSearch.presentation.viewModel.SearchArticleViewModel
 import com.cvelez.freemarkettest.ui.navigation.Route.HOME
@@ -28,24 +31,31 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TestMeliTheme {
-                // A surface container using the 'background' color from the theme
                 val navController = rememberNavController()
-
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    NavHost(navController = navController, startDestination = HOME) {
-                        composable(HOME) {
-                            val viewModel = hiltViewModel<SearchArticleViewModel>()
-                            SearchArticleRoute(viewModel = viewModel, onShowProductDetail = {
-                                it?.let {
-                                    navController.navigate("${PRODUCT_DETAIL}/$it")
-                                }
-                            })
-                        }
-                        composable("${PRODUCT_DETAIL}/{productId}"){
-                            val viewModel = hiltViewModel<ArticleDetailViewModel>()
-                            ArticleDetailRoute(viewModel = viewModel, onBackClicked = {
-                                navController.navigateUp()
-                            })
+                val viewModel = hiltViewModel<SearchArticleViewModel>()
+                val modifier = Modifier
+                Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                    if (viewModel.uiState.loadingState) {
+                        CustomLoad(context = this, stateProgress = true)
+                    } else {
+                        NavHost(navController = navController, startDestination = HOME) {
+                            composable(route = HOME) {
+                                val viewModelSearch = hiltViewModel<SearchArticleViewModel>()
+                                SearchArticleRoute(viewModel = viewModelSearch,modifier = modifier, onShowProductDetail = {
+                                    it?.let {
+                                        navController.navigate("${PRODUCT_DETAIL}/$it")
+                                    }
+                                })
+                            }
+                            composable(
+                                route = "${PRODUCT_DETAIL}/{productId}",
+                                arguments = listOf(navArgument("productId") { type = NavType.StringType })
+                            ) {
+                                val detailViewModel = hiltViewModel<ArticleDetailViewModel>()
+                                ArticleDetailRoute(viewModel = detailViewModel, onBackClicked = {
+                                    navController.navigateUp()
+                                })
+                            }
                         }
                     }
                 }

@@ -18,18 +18,26 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchArticleViewModel @Inject constructor(private val searchRepository: SearchArticleRepository) :
     ViewModel() {
-    var uiState by mutableStateOf(
-        SearchItemUiState()
-    )
+    var uiState by mutableStateOf(SearchItemUiState())
         private set
 
+
+    init {
+        onEvent(SearchArticleEvents.OnQueryChange("computadora"))
+        viewModelScope.launch {
+            searchProducts()
+            uiState = uiState.copy(loadingState = true)
+            // Simulate a delay for the loading state
+            kotlinx.coroutines.delay(2000)
+            uiState = uiState.copy(loadingState = false)
+        }
+    }
 
     fun onEvent(events: SearchArticleEvents) {
         when (events) {
             is SearchArticleEvents.OnQueryChange -> {
                 uiState = uiState.copy(searchQuery = events.query)
             }
-
             SearchArticleEvents.OnClickSearchProduct -> {
                 Log.d("sat_tag", "onEvent: buscar ${uiState.searchQuery}")
                 searchProducts()
@@ -41,13 +49,12 @@ class SearchArticleViewModel @Inject constructor(private val searchRepository: S
         if (uiState.searchQuery.isEmpty()) return
         uiState = uiState.copy(loadingState = true)
         viewModelScope.launch {
-            val result = searchRepository.searchProduct(uiState.searchQuery)
-            when(result){
+            when(val result = searchRepository.searchProduct(uiState.searchQuery)){
                 is ApiResult.Error -> {
                     handleErrorResult(result.errorWrapper)
                 }
                 is ApiResult.Success -> {
-                    uiState = uiState.copy(loadingState = false, productList = result?.data?.results ?: listOf())
+                    uiState = uiState.copy(loadingState = false, productList = result.data?.results ?: listOf())
                 }
             }
 

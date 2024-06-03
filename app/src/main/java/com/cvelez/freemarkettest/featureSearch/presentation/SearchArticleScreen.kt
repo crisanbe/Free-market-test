@@ -30,7 +30,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -75,10 +75,11 @@ import com.cvelez.freemarkettest.ui.theme.TestMeliTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchArticleScreen(
-        uiState: SearchItemUiState,
-        onSearchProduct: () -> Unit,
-        onQuerySearch: (String) -> Unit,
-        onProductClick: (String?) -> Unit
+    uiState: SearchItemUiState,
+    onSearchProduct: () -> Unit,
+    onQuerySearch: (String) -> Unit,
+    onProductClick: (String?) -> Unit,
+    modifier: Modifier
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -89,31 +90,68 @@ fun SearchArticleScreen(
     }
 
     Scaffold(
-            snackbarHost = { SnackbarHost(snackbarHostState) },
-            topBar = {
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            Column( verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally) {
                 TopAppBar(
                     title = {
-                        SearchBarWithIconsOutside(
-                            searchText = uiState.searchQuery,
-                            modifier = Modifier.fillMaxWidth(),
-                            onSearchTextChanged = { onQuerySearch(it) },
-                            onSearchProduct = { onSearchProduct() },
-                            onLeftIconClick = { /* Acción del ícono izquierdo */ },
-                            onRightIconClick = { /* Acción del ícono derecho */ },
-                            label = "Ofertas de la semana"
-                        )
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            SearchBarWithIconsOutside(
+                                searchText = uiState.searchQuery,
+                                modifier = modifier.fillMaxWidth(),
+                                onSearchTextChanged = { onQuerySearch(it) },
+                                onSearchProduct = { onSearchProduct() },
+                                onRightIconClick = { /* Acción del ícono derecho */ },
+                                label = "Ofertas de la semana"
+                            )
+
+                        }
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = { /* Acción del ícono izquierdo */ }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Menu,
+                                contentDescription = null,
+                                tint = Color.DarkGray
+                            )
+                        }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = androidx.compose.material.MaterialTheme.colors.primary,
-                        titleContentColor = androidx.compose.material.MaterialTheme.colors.onSurface
+                        containerColor = MaterialTheme.colors.primary,
+                        titleContentColor = MaterialTheme.colors.background
                     )
                 )
-            },
-            containerColor = androidx.compose.material.MaterialTheme.colors.onBackground,
-            contentColor = androidx.compose.material.MaterialTheme.colors.onBackground
-        ) { paddingValues ->
+                Box(
+                    contentAlignment = Alignment.CenterStart,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colors.primary)
+                ){
+                    Text(
+                        text = "📍Cll 25 # 12-12",
+                        style = TextStyle(
+                            color = MaterialTheme.colors.background,
+                            textAlign = TextAlign.Left,
+                            fontSize = 15.sp,
+                            fontFamily = FontFamily.SansSerif,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        modifier = Modifier.padding(start = 16.dp) // Añade un relleno horizontal
+                    )
+                }
+            }
+        },
+        containerColor = MaterialTheme.colors.background,
+        contentColor = MaterialTheme.colors.primary,
+    ) { paddingValues ->
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp),
@@ -121,19 +159,19 @@ fun SearchArticleScreen(
         ) {
             if (uiState.loadingState) {
                 CircularProgressIndicator(
-                    color = androidx.compose.material.MaterialTheme.colors.primaryVariant
+                    color = MaterialTheme.colors.primaryVariant
                 )
             } else {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    ArticleList(uiState.productList, onProductClick = onProductClick)
+                    ArticleList(uiState.productList, modifier = modifier, onProductClick = onProductClick)
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun SearchBarWithIconsOutside(
@@ -142,7 +180,6 @@ fun SearchBarWithIconsOutside(
     onSearchProduct: () -> Unit,
     modifier: Modifier = Modifier,
     label: String = "Buscar",
-    onLeftIconClick: () -> Unit,
     onRightIconClick: () -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -155,29 +192,17 @@ fun SearchBarWithIconsOutside(
     }
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy((-30).dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 1.dp, vertical = 8.dp)
     ) {
-        IconButton(
-            onClick = onLeftIconClick,
-            modifier = Modifier
-                .size(50.dp)
-                .offset(x = (-20).dp) // Ajustar el margen izquierdo
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Menu,
-                contentDescription = null,
-                tint = Color.DarkGray
-            )
-        }
 
         Box(
             modifier = Modifier
                 .weight(1f)
                 .height(45.dp)
-                .padding(horizontal = 10.dp)
+                .padding(horizontal = 1.dp)
                 .background(Color.White, CircleShape)
         ) {
             Row(
@@ -244,9 +269,7 @@ fun SearchBarWithIconsOutside(
 
         IconButton(
             onClick = onRightIconClick,
-            modifier = Modifier
-                .size(50.dp)
-                .offset(x = 18.dp)
+            modifier = Modifier.size(50.dp)
         ) {
             Icon(
                 imageVector = Icons.Outlined.ShoppingCart,
@@ -269,7 +292,7 @@ fun SearchProductScreenPreview() {
             SearchArticleScreen(
                 uiState = SearchItemUiState(),
                 onSearchProduct = {},
-                onQuerySearch = {}, onProductClick = {})
+                onQuerySearch = {}, onProductClick = {},    modifier = Modifier.fillMaxSize()   )
         }
     }
 }
