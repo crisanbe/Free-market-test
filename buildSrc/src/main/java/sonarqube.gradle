@@ -1,0 +1,50 @@
+apply plugin: 'org.sonarqube'
+//sonar.coverage.exclusions: se refiere especificamente a la cobertura de codigo
+def androidCoverageExclusion = [
+        '**/databinding/**/*.*',
+        '**/android/databinding/*Binding.*',
+        '**/BR.*',
+        '**/R.*',
+        '**/R$*.*',
+        '**/BuildConfig.*',
+        '**/manifests/**',
+        "**/**/src/main/*Manifest.*",
+        '**/*Module_*Factory.*',
+        '**/**/di/**',
+        '**/app/src/main/res/**'
+]
+//sonar.exclusions: abarca exclusiones mas generales en el analisis de sonarqube (Terminos de codigo, reglas de calidad)
+def androidCodeExclusion = [
+        '**/databinding/**/*.*',
+        '**/android/databinding/*Binding.*',
+        '**/BR.*',
+        '**/R.*',
+        '**/R$*.*',
+        '**/BuildConfig.*',
+        '**/manifests/**',
+        '**/**/manifests/**',
+        "**/**/src/main/*Manifest.*",
+        '**/**/di/**',
+        '**/app/src/main/res/**'
+]
+
+sonarqube {
+    properties {
+        property "sonar.host.url", "http://localhost:9000/"
+        property "sonar.token", "squ_ab41adeecf6d54b5d0ade49d1a065034826fdec7"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.projectKey", "com.cvelez.freemarkettest"
+        property "sonar.projectName", "Freemarkettest"
+        property "sonar.sources", "src/main/java"
+        property "sonar.java.source", "src/main/java"
+        property "sonar.tests", "src/test/java"
+        property "sonar.java.coveragePlugin", "jacoco"
+        property "sonar.coverage.exclusions", androidCoverageExclusion.join(",")
+        property "sonar.exclusions", androidCodeExclusion.join(",")
+        property "sonar.tags", "android"
+        property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/reports/kover/merged/xml/report.xml")
+        property "sonar.junit.reportsPath", "${project.buildDir}/test-results/testDebugUnitTest"
+    }
+}
+tasks.sonarqube.dependsOn(":clean")
+tasks.sonarqube.dependsOn(":koverMergedReport")

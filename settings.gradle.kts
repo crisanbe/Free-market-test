@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Free market test"
+rootProject.name = "Freemarkettest"
 include(":app")
  

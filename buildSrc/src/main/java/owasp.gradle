@@ -1,0 +1,7 @@
+apply plugin: 'org.owasp.dependencycheck'
+
+dependencyCheck {
+    failBuildOnCVSS = 100
+
+    suppressionFile = file("${rootProject.rootDir}/owasp-suppressions.xml")
+}

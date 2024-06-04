@@ -20,7 +20,7 @@ class SearchArticleRepositoryImpl @Inject constructor(private val searchProductD
             try {
                 searchProductDataSource.searchProduct(query).toApiResult()
             } catch (e: Exception) {
-                Log.e("error", "searchProduct: ", e)
+                //Log.e("error", "searchProduct: ", e)
                 ApiResult.Error(e.toErrorWrapper())
             }
         }
