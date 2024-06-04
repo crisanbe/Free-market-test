@@ -7,7 +7,7 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class SearchArticleDataSourceImpl @Inject constructor(private val apiService: ApiService) : SearchArticleDataSource {
-    override suspend fun searchProduct(query:String): Response<SearchArticleResult?> {
+    override suspend fun searchArticle(query:String): Response<SearchArticleResult?> {
         return apiService.searchItems(query)
     }
 }

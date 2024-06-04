@@ -24,8 +24,8 @@ private val DarkColorPalette = darkColors(
     surface = theme_light_surface,
     error = theme_light_error,
     onPrimary = Color.White,
-    onSecondary = Color.White,
-    onBackground = Color.White,
+    onSecondary = theme_light_onSecondary,
+    onBackground = theme_light_onBackground,
     onSurface = Color.White,
     onError = Color.White
 )
@@ -39,8 +39,8 @@ private val LightColorPalette = lightColors(
     surface = theme_dark_surface,
     error = theme_dark_error,
     onPrimary = Color.Black,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
+    onSecondary = theme_dark_onSecondary,
+    onBackground = theme_dark_onBackground,
     onSurface = Color.Black,
     onError = Color.Black
 )

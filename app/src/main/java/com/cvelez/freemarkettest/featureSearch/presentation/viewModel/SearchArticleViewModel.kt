@@ -8,27 +8,31 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cvelez.freemarkettest.core.network.wraps.ApiResult
 import com.cvelez.freemarkettest.core.network.wraps.ErrorWrapper
-import com.cvelez.freemarkettest.featureSearch.data.model.Article
 import com.cvelez.freemarkettest.featureSearch.domain.SearchArticleRepository
 import com.cvelez.freemarkettest.featureSearch.presentation.estateUi.SearchArticleEvents
+import com.cvelez.freemarkettest.featureSearch.presentation.estateUi.SearchItemUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchArticleViewModel @Inject constructor(private val searchRepository: SearchArticleRepository) :
-    ViewModel() {
+class SearchArticleViewModel @Inject constructor(
+    private val searchRepository: SearchArticleRepository
+) : ViewModel() {
+
     var uiState by mutableStateOf(SearchItemUiState())
         private set
 
-
     init {
         onEvent(SearchArticleEvents.OnQueryChange("computadora"))
+        performInitialSearch()
+    }
+
+    private fun performInitialSearch() {
         viewModelScope.launch {
-            searchProducts()
             uiState = uiState.copy(loadingState = true)
-            // Simulate a delay for the loading state
-            kotlinx.coroutines.delay(2000)
+            searchProducts()
+            kotlinx.coroutines.delay(2000) // Simulate a delay for the loading state
             uiState = uiState.copy(loadingState = false)
         }
     }
@@ -49,43 +53,20 @@ class SearchArticleViewModel @Inject constructor(private val searchRepository: S
         if (uiState.searchQuery.isEmpty()) return
         uiState = uiState.copy(loadingState = true)
         viewModelScope.launch {
-            when(val result = searchRepository.searchProduct(uiState.searchQuery)){
-                is ApiResult.Error -> {
-                    handleErrorResult(result.errorWrapper)
-                }
-                is ApiResult.Success -> {
-                    uiState = uiState.copy(loadingState = false, productList = result.data?.results ?: listOf())
-                }
+            when (val result = searchRepository.searchArticle(uiState.searchQuery)) {
+                is ApiResult.Error -> handleErrorResult(result.error)
+                is ApiResult.Success -> uiState = uiState.copy(loadingState = false, productList = result.data?.results ?: listOf())
             }
-
         }
-
     }
 
     private fun handleErrorResult(errorWrapper: ErrorWrapper?) {
-        val message :String = when(errorWrapper){
-            ErrorWrapper.ServiceNotAvailable -> {
-                "Ocurrio un error al obtener los resultados, revisa tu conexión a internet"
-            }
-            is ErrorWrapper.ServiceInternalError -> {
-                "ahora mismo no es posible obtener los resultados"
-            }
-            ErrorWrapper.UnknownError -> {
-                "Ocurrio un error inesperado al obtener los resultados"
-            }
-            else -> {
-                "Ocurrio un error inesperado al obtener los resultados"
-            }
+        val message: String = when (errorWrapper) {
+            ErrorWrapper.ServiceNotAvailable -> "An error occurred while getting the results, check your internet connection.."
+            is ErrorWrapper.ServiceInternalError -> "It is not possible to obtain the results at this time"
+            ErrorWrapper.UnknownError -> "An unexpected error occurred when obtaining the results."
+            else -> "An unexpected error occurred when obtaining the results."
         }
         uiState = uiState.copy(loadingState = false, errorState = true, errorMessage = message)
     }
-
 }
-
-data class SearchItemUiState(
-    val searchQuery: String = "",
-    val loadingState: Boolean = false,
-    val productList: List<Article> = listOf(),
-    val errorState : Boolean = false,
-    val errorMessage : String? = null
-)

@@ -17,6 +17,7 @@ import okio.IOException
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
+import java.net.HttpURLConnection
 
 class SearchArticleRepositoryImplTest {
     private lateinit var searchArticleRepositoryImpl: SearchArticleRepositoryImpl
@@ -39,69 +40,69 @@ class SearchArticleRepositoryImplTest {
     @Test
     fun searchProduct_datasource_returns_success() = runTest {
         // Arrange
-        coEvery { searchProductDataSource.searchProduct(SEARCH_QUERY) } returns
+        coEvery { searchProductDataSource.searchArticle(SEARCH_QUERY) } returns
                 Response.success(SEARCH_RESULT)
         // Act
-        val result = searchArticleRepositoryImpl.searchProduct(SEARCH_QUERY)
+        val result = searchArticleRepositoryImpl.searchArticle(SEARCH_QUERY)
         // Assert
         assertThat(result).isInstanceOf(ApiResult.Success::class.java)
         assertThat((result as ApiResult.Success).data).isEqualTo(SEARCH_RESULT)
-        coVerify(exactly = 1) { searchProductDataSource.searchProduct(SEARCH_QUERY) }
+        coVerify(exactly = 1) { searchProductDataSource.searchArticle(SEARCH_QUERY) }
     }
 
     @Test
     fun searchProduct_datasource_returns_serverErrorOrNull() {
         // Arrange
-        coEvery { searchProductDataSource.searchProduct(SEARCH_QUERY) } returns Response.error(500, "error".toResponseBody())
+        coEvery { searchProductDataSource.searchArticle(SEARCH_QUERY) } returns Response.error(500, "error".toResponseBody())
 
         // Act
-        val result = runBlocking { searchArticleRepositoryImpl.searchProduct(SEARCH_QUERY) }
+        val result = runBlocking { searchArticleRepositoryImpl.searchArticle(SEARCH_QUERY) }
 
         // Assert
         assertThat(result).isInstanceOf(ApiResult.Error::class.java)
-        assertThat((result as ApiResult.Error).errorWrapper).isInstanceOf(ErrorWrapper.UnknownError::class.java)
-        assertThat((result.errorWrapper as ErrorWrapper.UnknownError).statusCode).isEqualTo(null)
-        coVerify(exactly = 1) { searchProductDataSource.searchProduct(SEARCH_QUERY) }
+        assertThat((result as ApiResult.Error).error).isInstanceOf(ErrorWrapper.ServiceInternalError::class.java)
+        assertThat((result.error as ErrorWrapper.ServiceInternalError).statusCode).isEqualTo(
+            HttpURLConnection.HTTP_INTERNAL_ERROR)
+        coVerify(exactly = 1) { searchProductDataSource.searchArticle(SEARCH_QUERY) }
     }
-
 
     @Test
     fun searchProduct_datasource_returns_ServiceNotAvailableError() = runTest {
         // Arrange
         val query = "some_query"
         val exception = IOException("Service is not available")
-        coEvery { searchProductDataSource.searchProduct(query) } throws exception
+        coEvery { searchProductDataSource.searchArticle(query) } throws exception
 
         // Act
-        val result = searchArticleRepositoryImpl.searchProduct(query)
+        val result = searchArticleRepositoryImpl.searchArticle(query)
 
         // Assert
         assertThat(result).isInstanceOf(ApiResult.Error::class.java)
-        assertThat((result as ApiResult.Error).errorWrapper).isInstanceOf(ErrorWrapper.ServiceNotAvailable::class.java)
-        coVerify(exactly = 1) { searchProductDataSource.searchProduct(query) }
+        assertThat((result as ApiResult.Error).error).isInstanceOf(ErrorWrapper.ServiceNotAvailable::class.java)
+        coVerify(exactly = 1) { searchProductDataSource.searchArticle(query) }
     }
 
     @Test
     fun searchProduct_datasource_returns_unknownError() = runTest {
         // Arrange
-        coEvery { searchProductDataSource.searchProduct(SEARCH_QUERY) } returns
+        coEvery { searchProductDataSource.searchArticle(SEARCH_QUERY) } returns
                 Response.error(404, "error".toResponseBody())
         // Act
-        val result = searchArticleRepositoryImpl.searchProduct(SEARCH_QUERY)
+        val result = searchArticleRepositoryImpl.searchArticle(SEARCH_QUERY)
         // Assert
         assertThat(result).isInstanceOf(ApiResult.Error::class.java)
-        assertThat((result as ApiResult.Error).errorWrapper).isInstanceOf(ErrorWrapper.UnknownError::class.java)
-        coVerify(exactly = 1) { searchProductDataSource.searchProduct(SEARCH_QUERY) }
+        assertThat((result as ApiResult.Error).error).isInstanceOf(ErrorWrapper.UnknownError::class.java)
+        coVerify(exactly = 1) { searchProductDataSource.searchArticle(SEARCH_QUERY) }
     }
 
     @Test
     fun searchProduct_datasource_throws_exception_returns_ServiceNotAvailableError() = runTest {
         // Arrange
-        coEvery { searchProductDataSource.searchProduct(SEARCH_QUERY) } throws RuntimeException()
+        coEvery { searchProductDataSource.searchArticle(SEARCH_QUERY) } throws RuntimeException()
         // Act
-        val result = searchArticleRepositoryImpl.searchProduct(SEARCH_QUERY)
+        val result = searchArticleRepositoryImpl.searchArticle(SEARCH_QUERY)
         // Assert
         assertThat(result).isInstanceOf(ApiResult.Error::class.java)
-        assertThat((result as ApiResult.Error).errorWrapper).isInstanceOf(ErrorWrapper.UnknownError::class.java)
+        assertThat((result as ApiResult.Error).error).isInstanceOf(ErrorWrapper.UnknownError::class.java)
     }
 }

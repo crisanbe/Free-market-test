@@ -48,7 +48,7 @@ class SearchArticleDataSourceImplTest {
             //Arrange
             getCorrectResultApiservice()
             //Act
-            val result = SUT.searchProduct(TEST_QUERY)
+            val result = SUT.searchArticle(TEST_QUERY)
             //Assert
             assertThat(result.isSuccessful).isEqualTo(true)
             assertThat(result.body()).isEqualTo(searchResult)
@@ -62,7 +62,7 @@ class SearchArticleDataSourceImplTest {
             //Arrange
             getEmptyCorrectResultApiservice()
             //Act
-            val result = SUT.searchProduct(EMPTY_QUERY)
+            val result = SUT.searchArticle(EMPTY_QUERY)
             //Assert
             assertThat(result.isSuccessful).isEqualTo(true)
             assertThat(result.body()).isEqualTo(emptySearchResult)
@@ -76,7 +76,7 @@ class SearchArticleDataSourceImplTest {
             //Arrange
             getErrorResultApiservice()
             //Act
-            val result = SUT.searchProduct(TEST_QUERY)
+            val result = SUT.searchArticle(TEST_QUERY)
             //Assert
             assertThat(result.isSuccessful).isEqualTo(false)
             verify(1) { apiService.searchItems(TEST_QUERY) }

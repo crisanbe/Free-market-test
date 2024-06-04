@@ -17,7 +17,7 @@ class ArticleDetailRepositoryImpl @Inject constructor(private val productDetailD
             try {
                 productDetailDataSource.getProductDetail(productId = productId).toApiResult()
             } catch (e: Exception) {
-                Log.e("error", "getProductDetail: ", e)
+                Log.e("error", "getArticleDetail: ", e)
                 ApiResult.Error(e.toErrorWrapper())
             }
         }

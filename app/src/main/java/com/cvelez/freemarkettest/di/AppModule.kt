@@ -18,25 +18,20 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun providesRetrofitClient(): OkHttpClient {
-        return OkHttpClient.Builder().connectTimeout(300, TimeUnit.SECONDS)
-            .readTimeout(300, TimeUnit.SECONDS).build()
-    }
+    fun providesRetrofitClient() = OkHttpClient.Builder()
+        .connectTimeout(300, TimeUnit.SECONDS)
+        .readTimeout(300, TimeUnit.SECONDS)
+        .build()
 
     @Singleton
     @Provides
-    fun providesRetrofit(retrofitClient: OkHttpClient) : Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
-            .client(retrofitClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
+    fun providesRetrofit(retrofitClient: OkHttpClient) = Retrofit.Builder()
+        .baseUrl(Constants.BASE_URL)
+        .client(retrofitClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
     @Singleton
     @Provides
-    fun providesApiService(retrofit: Retrofit) : ApiService {
-        return retrofit.create(ApiService::class.java)
-    }
-
+    fun providesApiService(retrofit: Retrofit) = retrofit.create(ApiService::class.java)
 }

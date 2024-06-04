@@ -1,6 +1,5 @@
 package com.cvelez.freemarkettest.featureSearch.data.repository
 
-import android.util.Log
 import com.cvelez.freemarkettest.core.network.api.utils.ErrorUtils.getApiError
 import com.cvelez.freemarkettest.core.network.wraps.ApiResult
 import com.cvelez.freemarkettest.core.network.wraps.ErrorWrapper
@@ -15,12 +14,11 @@ import java.net.SocketException
 import javax.inject.Inject
 
 class SearchArticleRepositoryImpl @Inject constructor(private val searchProductDataSource: SearchArticleDataSource) :SearchArticleRepository {
-    override suspend fun searchProduct(query:String): ApiResult<SearchArticleResult?> {
+    override suspend fun searchArticle(query:String): ApiResult<SearchArticleResult?> {
         return withContext(Dispatchers.IO) {
             try {
-                searchProductDataSource.searchProduct(query).toApiResult()
+                searchProductDataSource.searchArticle(query).toApiResult()
             } catch (e: Exception) {
-                //Log.e("error", "searchProduct: ", e)
                 ApiResult.Error(e.toErrorWrapper())
             }
         }
@@ -35,13 +33,9 @@ fun <T> Response<T>.toApiResult() : ApiResult<T?> {
     }
 }
 
-fun Exception.toErrorWrapper() : ErrorWrapper {
-    return when(this){
-        is IOException, is SocketException -> {
-           ErrorWrapper.ServiceNotAvailable
-        }
-        else -> {
-            ErrorWrapper.UnknownError
-        }
+fun Exception.toErrorWrapper(): ErrorWrapper {
+    return when (this) {
+        is IOException, is SocketException -> ErrorWrapper.ServiceNotAvailable
+        else -> ErrorWrapper.UnknownError
     }
 }
