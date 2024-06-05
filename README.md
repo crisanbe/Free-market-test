@@ -2,15 +2,14 @@
 Free market test
 
 # Reto MercadoLibre
-# Qué es este proyecto?
 La app debería contar con tres pantallas:
 1. Campo de búsqueda.
 2. Visualización de resultados de la búsqueda.
 3. Detalle de un producto.
 Proyecto
 [https://github.com/crisanbe/Free-market-test/blob/dev/README.md].
-
-![](https://i.imgur.com/hs6r85i.png)![](https://i.imgur.com/T94R9Lw.png)![](https://i.imgur.com/6LAvBDT.png)![](https://i.imgur.com/pb8X6kQ.png)
+![](https://i.imgur.com/FjP49sn.mp4)
+![](https://i.imgur.com/hs6r85i.png)![](https://i.imgur.com/T94R9Lw.png)
 
 # Características principales
 ![img.png](img.png)

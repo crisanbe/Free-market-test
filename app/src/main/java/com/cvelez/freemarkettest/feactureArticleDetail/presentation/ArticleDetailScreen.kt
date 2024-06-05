@@ -3,21 +3,26 @@ package com.cvelez.freemarkettest.feactureArticleDetail.presentation
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
-import androidx.compose.material3.Card
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.CardDefaults
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import coil.compose.rememberAsyncImagePainter
 import com.cvelez.freemarkettest.R
 import com.cvelez.freemarkettest.feactureArticleDetail.data.model.ArticleDetail
@@ -26,7 +31,6 @@ import com.cvelez.freemarkettest.feactureArticleDetail.presentation.estateUi.Art
 import com.cvelez.freemarkettest.ui.Utils
 import com.cvelez.freemarkettest.ui.theme.TestMeliTheme
 import com.cvelez.freemarkettest.featureSearch.data.model.ArticleAttributes
-
 @Composable
 fun ArticleDetailScreen(
     uiState: ArticleDetailUiState,
@@ -36,18 +40,26 @@ fun ArticleDetailScreen(
     onAddToCartClicked: () -> Unit
 ) {
     Box(
-        modifier = modifier.fillMaxSize().background(MaterialTheme.colors.background),
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background),
         contentAlignment = Alignment.Center,
     ) {
         if (uiState.loadingState) {
             CircularProgressIndicator(color = MaterialTheme.colors.primary)
         } else {
-            Column( modifier = Modifier.fillMaxSize()   ){
+            val listState = rememberLazyListState()
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
                 TopBar(onBackClicked = onBackClicked)
-                LazyColumn() {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    state = listState
+                ) {
                     item {
                         uiState.product?.pictures?.firstOrNull()?.let { picture ->
-                            ImageCard(pictureUrl = picture.secure_url)
+                            ZoomableImageCard(pictureUrl = picture.secure_url)
                         }
                     }
 
@@ -76,7 +88,6 @@ fun ArticleDetailScreen(
                         }
                     }
                 }
-
             }
         }
     }
@@ -99,62 +110,69 @@ fun TopBar(onBackClicked: () -> Unit) {
 }
 
 @Composable
-fun ImageCard(pictureUrl: String?) {
+fun ZoomableImageCard(pictureUrl: String?) {
+    var scale by remember { mutableStateOf(1f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+
     Card(
-        colors = CardDefaults.cardColors(MaterialTheme.colors.background),
+        backgroundColor = (MaterialTheme.colors.background),
         modifier = Modifier
             .fillMaxWidth()
-            .height(400.dp),
+            .height(250.dp) // Ajuste la altura para no ocupar toda la pantalla en horizontal
+            .pointerInput(Unit) {
+                detectTransformGestures { _, pan, zoom, _ ->
+                    scale *= zoom
+                    offset = Offset(offset.x + pan.x, offset.y + pan.y)
+                }
+            }
+            .graphicsLayer(
+                scaleX = maxOf(1f, minOf(3f, scale)),
+                scaleY = maxOf(1f, minOf(3f, scale)),
+                translationX = offset.x,
+                translationY = offset.y
+            ),
         border = BorderStroke(1.dp, MaterialTheme.colors.background)
     ) {
-        Column(
-            modifier = Modifier.padding(10.dp)
-        ) {
-            Image(
-                painter = rememberAsyncImagePainter(pictureUrl),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+        Image(
+            painter = rememberAsyncImagePainter(pictureUrl),
+            contentDescription = null,
+            contentScale = ContentScale.Fit,
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
 
 @Composable
 fun ProductInfoCard(title: String, price: Long) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.subtitle1,
-                color = MaterialTheme.colors.secondaryVariant
-            )
-            Text(
-                text = Utils.formatPrice(price),
-                style = MaterialTheme.typography.h5,
-                color = MaterialTheme.colors.secondaryVariant
-            )
-        }
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.subtitle1,
+            color = MaterialTheme.colors.secondaryVariant
+        )
+        Text(
+            text = Utils.formatPrice(price),
+            style = MaterialTheme.typography.h5,
+            color = MaterialTheme.colors.secondaryVariant
+        )
+    }
 }
 
 @Composable
 fun AttributesCard(attributes: List<ArticleAttributes>) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = stringResource(R.string.caracteriticas),
+            style = MaterialTheme.typography.body1,
+            color = MaterialTheme.colors.secondary
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        attributes.forEach { attribute ->
             Text(
-                text = stringResource(R.string.caracteriticas),
-                style = MaterialTheme.typography.body1,
-                color = MaterialTheme.colors.secondary
+                text = "- ${attribute.name}: ${attribute.valueName}",
+                modifier = Modifier.padding(start = 16.dp),
+                color = MaterialTheme.colors.secondaryVariant
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            attributes.forEach { attribute ->
-                Text(
-                    text = "- ${attribute.name}: ${attribute.valueName}",
-                    modifier = Modifier.padding(start = 16.dp),
-                    color = MaterialTheme.colors.secondaryVariant
-                )
         }
     }
 }
@@ -162,13 +180,11 @@ fun AttributesCard(attributes: List<ArticleAttributes>) {
 @Composable
 fun AdditionalInfoCard(condition: String, permalink: String) {
     Card(
-        colors = CardDefaults.cardColors(MaterialTheme.colors.background),
+        backgroundColor = (MaterialTheme.colors.background),
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = 4.dp
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = stringResource(R.string.condicion, condition),
                 color = MaterialTheme.colors.secondary,
@@ -187,7 +203,9 @@ fun AdditionalInfoCard(condition: String, permalink: String) {
 @Composable
 fun ActionButtons(onBuyClicked: () -> Unit, onAddToCartClicked: () -> Unit) {
     Column(
-        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
     ) {
         Button(
@@ -202,7 +220,7 @@ fun ActionButtons(onBuyClicked: () -> Unit, onAddToCartClicked: () -> Unit) {
             onClick = onAddToCartClicked,
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.onSecondary)
         ) {
-            Text(text =  "Agregar al carrito", color = MaterialTheme.colors.onBackground)
+            Text(text = "Agregar al carrito", color = MaterialTheme.colors.onBackground)
         }
         Button(
             modifier = Modifier.fillMaxWidth(),
