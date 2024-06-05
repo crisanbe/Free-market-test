@@ -9,7 +9,7 @@ La app debería contar con tres pantallas:
 Proyecto
 [https://github.com/crisanbe/Free-market-test/blob/dev/README.md].
 
-![](https://i.imgur.com/FjP49sn.mp4).
+<img src="https://github.com/crisanbe/Free-market-test/blob/dev/app/src/main/res/drawable/gif.gif" alt=""/>
 
 ![](https://i.imgur.com/hs6r85i.png)![](https://i.imgur.com/T94R9Lw.png)
 
