@@ -33,7 +33,7 @@ sonarqube {
         property "sonar.host.url", "http://localhost:9000/"
         property "sonar.token", "squ_ab41adeecf6d54b5d0ade49d1a065034826fdec7"
         property "sonar.sourceEncoding", "UTF-8"
-        property "sonar.projectKey", "com.cvelez.freemarkettest"
+        property "sonar.projectKey", "testMeli"
         property "sonar.projectName", "Freemarkettest"
         property "sonar.sources", "src/main/java"
         property "sonar.java.source", "src/main/java"

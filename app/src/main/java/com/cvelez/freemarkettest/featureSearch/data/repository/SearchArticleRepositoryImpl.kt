@@ -2,7 +2,7 @@ package com.cvelez.freemarkettest.featureSearch.data.repository
 
 import com.cvelez.freemarkettest.core.network.api.utils.ErrorUtils.getApiError
 import com.cvelez.freemarkettest.core.network.wraps.ApiResult
-import com.cvelez.freemarkettest.core.network.wraps.ErrorWrapper
+import com.cvelez.freemarkettest.core.network.wraps.BugWrapper
 import com.cvelez.freemarkettest.featureSearch.data.model.SearchArticleResult
 import com.cvelez.freemarkettest.featureSearch.data.repository.dataSource.SearchArticleDataSource
 import com.cvelez.freemarkettest.featureSearch.domain.SearchArticleRepository
@@ -33,9 +33,9 @@ fun <T> Response<T>.toApiResult() : ApiResult<T?> {
     }
 }
 
-fun Exception.toErrorWrapper(): ErrorWrapper {
+fun Exception.toErrorWrapper(): BugWrapper {
     return when (this) {
-        is IOException, is SocketException -> ErrorWrapper.ServiceNotAvailable
-        else -> ErrorWrapper.UnknownError
+        is IOException, is SocketException -> BugWrapper.ServiceNotAvailable
+        else -> BugWrapper.UnknownError
     }
 }

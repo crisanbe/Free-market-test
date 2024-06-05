@@ -7,7 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cvelez.freemarkettest.core.network.wraps.ApiResult
-import com.cvelez.freemarkettest.core.network.wraps.ErrorWrapper
+import com.cvelez.freemarkettest.core.network.wraps.BugWrapper
 import com.cvelez.freemarkettest.feactureArticleDetail.domain.ArticleDetailRepository
 import com.cvelez.freemarkettest.feactureArticleDetail.presentation.estateUi.ArticleDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,11 +31,11 @@ class ArticleDetailViewModel @Inject constructor(
         viewModelScope.launch {
             uiState = uiState.copy(loadingState = true)
             val id: String = savedStateHandle["productId"] ?: run {
-                handleErrorResult(ErrorWrapper.UnknownError)
+                handleErrorResult(BugWrapper.UnknownError)
                 return@launch
             }
             when (val result = productDetailRepository.getProductDetail(id)) {
-                is ApiResult.Error -> handleErrorResult(result.error)
+                is ApiResult.Error -> handleErrorResult(result.errorWrapper)
                 is ApiResult.Success -> uiState = uiState.copy(
                     product = result.data,
                     loadingState = false
@@ -44,15 +44,15 @@ class ArticleDetailViewModel @Inject constructor(
         }
     }
 
-    private fun handleErrorResult(errorWrapper: ErrorWrapper?) {
+    private fun handleErrorResult(errorWrapper: BugWrapper?) {
         val message: String = when (errorWrapper) {
-            ErrorWrapper.ServiceNotAvailable -> {
+            BugWrapper.ServiceNotAvailable -> {
                 "An error occurred while getting the results, check your internet connection."
             }
-            is ErrorWrapper.ServiceInternalError -> {
+            is BugWrapper.ServiceInternalError -> {
                 "It is not possible to obtain the results at this time."
             }
-            ErrorWrapper.UnknownError, null -> {
+            BugWrapper.UnknownError, null -> {
                 "An unexpected error occurred when obtaining the results."
             }
         }

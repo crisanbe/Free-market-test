@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cvelez.freemarkettest.core.network.wraps.ApiResult
-import com.cvelez.freemarkettest.core.network.wraps.ErrorWrapper
+import com.cvelez.freemarkettest.core.network.wraps.BugWrapper
 import com.cvelez.freemarkettest.featureSearch.domain.SearchArticleRepository
 import com.cvelez.freemarkettest.featureSearch.presentation.estateUi.SearchArticleEvents
 import com.cvelez.freemarkettest.featureSearch.presentation.estateUi.SearchItemUiState
@@ -54,17 +54,17 @@ class SearchArticleViewModel @Inject constructor(
         uiState = uiState.copy(loadingState = true)
         viewModelScope.launch {
             when (val result = searchRepository.searchArticle(uiState.searchQuery)) {
-                is ApiResult.Error -> handleErrorResult(result.error)
+                is ApiResult.Error -> handleErrorResult(result.errorWrapper)
                 is ApiResult.Success -> uiState = uiState.copy(loadingState = false, productList = result.data?.results ?: listOf())
             }
         }
     }
 
-    private fun handleErrorResult(errorWrapper: ErrorWrapper?) {
+    private fun handleErrorResult(errorWrapper: BugWrapper?) {
         val message: String = when (errorWrapper) {
-            ErrorWrapper.ServiceNotAvailable -> "An error occurred while getting the results, check your internet connection.."
-            is ErrorWrapper.ServiceInternalError -> "It is not possible to obtain the results at this time"
-            ErrorWrapper.UnknownError -> "An unexpected error occurred when obtaining the results."
+            BugWrapper.ServiceNotAvailable -> "An error occurred while getting the results, check your internet connection.."
+            is BugWrapper.ServiceInternalError -> "It is not possible to obtain the results at this time"
+            BugWrapper.UnknownError -> "An unexpected error occurred when obtaining the results."
             else -> "An unexpected error occurred when obtaining the results."
         }
         uiState = uiState.copy(loadingState = false, errorState = true, errorMessage = message)
